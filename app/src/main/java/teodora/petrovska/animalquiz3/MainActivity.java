@@ -1,6 +1,10 @@
 package teodora.petrovska.animalquiz3;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +15,20 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String GUESSES="settings_numberOgGuesses";
+    public static final String ANIMAL_TYPE="settings_animalsType";
+    public static final String QUIZ_BACKGROUND_COLOR="settings_quiz_background";
+    public static final String QUIZ_FONT="settings_quiz_font";
+
+
+    private boolean isSettingsChanged=false;
+
+    static Typeface chunkfive;
+    static Typeface fontlerybrown;
+    static Typeface wonderbarDemo;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,14 +38,15 @@ public class MainActivity extends AppCompatActivity {
 
         setTitle("AnimalQuiz");
 
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        chunkfive=Typeface.createFromAsset(getAssets(), "fonts/Chunkfive.otf");
+        fontlerybrown=Typeface.createFromAsset(getAssets(), "fonts/FontleroyBrown.ttf");
+        wonderbarDemo=Typeface.createFromAsset(getAssets(), "fonts/Wonderbar Demo.otf");
+
+        PreferenceManager.setDefaultValues(MainActivity.this, R.xml.quiz_preferences, false);
+        PreferenceManager.getDefaultSharedPreferences(MainActivity.this).registerOnSharedPreferenceChangeListener(settingsChangeListener);
+
+
+
     }
 
     @Override
@@ -39,16 +58,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
+        Intent preferencesIntent=new Intent(MainActivity.this,SettingsActivity.class);
+        startActivity(preferencesIntent);
         return super.onOptionsItemSelected(item);
+
     }
+
+    private SharedPreferences.OnSharedPreferenceChangeListener settingsChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+
+        }
+    };
 }
