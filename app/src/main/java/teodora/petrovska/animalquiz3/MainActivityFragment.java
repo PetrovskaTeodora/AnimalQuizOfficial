@@ -1,17 +1,23 @@
 package teodora.petrovska.animalquiz3;
 
 
+import android.animation.Animator;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -20,8 +26,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -173,6 +182,166 @@ public class MainActivityFragment extends Fragment {
     }
 
 
+public void resetAnimalQuiz(){
 
+    AssetManager assets= getActivity().getAssets();
+    allAnimalsNamesList.clear();
+
+    try{
+        for(String animalType:animalTypesInQuiz){
+            String [] animalImagePathsInQuiz=assets.list(animalType);
+            for (String animalImagePathInQuiz : animalImagePathsInQuiz){
+                allAnimalsNamesList.add(animalImagePathInQuiz.replace(".png", ""));
+            }
+        }
+
+    }
+    catch (Exception e){
+        Log.e("Animal quiz", "Error", e);
+    }
+
+
+    numberOfRightAnswers=0;
+    numberOfAllGuesses=0;
+    animalsNamesQuizList.clear();
+
+    int counter=1;
+    int numberOfAvailableAnimals=allAnimalsNamesList.size();
+
+    while(counter <= NUMBER_OF_ANIMALS_INCLUDED_IN_QUIZ){
+        int randomIndex=secureRandomNumber.nextInt(numberOfAvailableAnimals);
+        String animalImageName=allAnimalsNamesList.get(randomIndex);
+
+        if(!animalsNamesQuizList.contains(animalImageName)){
+            animalsNamesQuizList.add(animalImageName);
+            ++counter;
+        }
+    }
+
+    showNextAnimal();
+
+
+}
+
+private void animateAnimalQuiz(boolean animateOutAnimalImage){
+        if(numberOfRightAnswers==0){
+            return;
+        }
+
+        int xTopLeft=0;
+        int yTopLeft=0;
+
+
+        int xBottomRight=animalQuizLinearLayout.getLeft()+animalQuizLinearLayout.getRight();
+        int yBottomRight=animalQuizLinearLayout.getTop()+animalQuizLinearLayout.getBottom();
+
+
+        int radius=Math.max(animalQuizLinearLayout.getWidth(), animalQuizLinearLayout.getHeight());
+
+        Animator animator;
+
+        if(animateOutAnimalImage){
+
+            animator= ViewAnimationUtils.createCircularReveal(animalQuizLinearLayout, xBottomRight, yBottomRight, radius, 0);
+
+            animator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                        showNextAnimal();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+        }
+        else{
+            animator=ViewAnimationUtils.createCircularReveal(animalQuizLinearLayout, xTopLeft, yTopLeft, 0, radius);
+        }
+
+        animator.setDuration(700);
+        animator.start();
+    }
+
+
+
+private void showNextAnimal(){
+
+        String nextAnimalImageName=animalsNamesQuizList.remove(0);
+        correctAnimalsAnswer=nextAnimalImageName;
+        txtAnswer.setText("");
+
+        txtQuestionNumber.setText(getString(R.string.question_text,(numberOfRightAnswers + 1), NUMBER_OF_ANIMALS_INCLUDED_IN_QUIZ));
+
+        String animalType=nextAnimalImageName.substring(0, nextAnimalImageName.indexOf("-"));
+
+        AssetManager assets=getActivity().getAssets();
+
+        try(InputStream stream=assets.open(animalType + "/" + nextAnimalImageName+".png")){
+
+            Drawable animalImage=Drawable.createFromStream(stream, nextAnimalImageName);
+            imgAnimal.setImageDrawable(animalImage);
+
+            animateAnimalQuiz(false);
+
+    }
+        catch(IOException e){
+            Log.e("AnimalQuiz", "There is an Error Getting"+nextAnimalImageName, e);
+        }
+
+    Collections.shuffle(allAnimalsNamesList);
+
+
+        int correctAnimalNameIndex=allAnimalsNamesList.indexOf(correctAnimalsAnswer);
+        String correctAnimalName= allAnimalsNamesList.remove(correctAnimalNameIndex);
+        allAnimalsNamesList.add(correctAnimalName);
+
+        for(int row=0;row<numberOfAnimalGuessRows; row++){
+            for(int column=0; column<rowsOfGuessButtonsInAnimalQuiz[row].getChildCount(); column++){
+
+                Button btnGuess=(Button) rowsOfGuessButtonsInAnimalQuiz[row].getChildAt(column);
+                btnGuess.setEnabled(true);
+
+                String animalImageName = allAnimalsNamesList.get((row*2)+column);
+                btnGuess.setText(getTheExactAnimalName(animalImageName));
+            }
+        }
+
+        int row = secureRandomNumber.nextInt(numberOfAnimalGuessRows);
+        int column = secureRandomNumber.nextInt(2);
+        LinearLayout randomRow=rowsOfGuessButtonsInAnimalQuiz[row];
+        String CorrectAnimalImageName=getTheExactAnimalName(correctAnimalsAnswer);
+    ((Button) randomRow.getChildAt(column)).setText(animalImageName);
+
+    }
+
+
+
+    public void modifyAnimalsGuessRows(SharedPreferences sharedPreferences){
+        final String NUMBER_OF_GUESS_OPTIONS= sharedPreferences.getString(MainActivity.GUESSES, null);
+        numberOfAnimalGuessRows=Integer.parseInt(NUMBER_OF_GUESS_OPTIONS)/2;
+
+        for(LinearLayout horizontalLinearLayout : rowsOfGuessButtonsInAnimalQuiz){
+            horizontalLinearLayout.setVisibility(View.GONE);
+        }
+
+        for(int row=0; row<numberOfAnimalGuessRows;row++){
+            rowsOfGuessButtonsInAnimalQuiz[row].setVisibility(View.VISIBLE);
+        }
+
+
+
+    }
 
 }
