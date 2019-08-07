@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -342,6 +343,146 @@ private void showNextAnimal(){
 
 
 
+    }
+
+    public void modifyTypeOfAnimalsInQuiz(SharedPreferences sharedPreferences){
+        animalTypesInQuiz=sharedPreferences.getStringSet(MainActivity.ANIMAL_TYPE, null);
+
+    }
+
+    public void modifyQuizFont(SharedPreferences sharedPreferences){
+
+        String fontStringValue = sharedPreferences.getString(MainActivity.QUIZ_FONT, null);
+
+        switch(fontStringValue){
+
+            case "Chunkfive.otf":
+                for(LinearLayout row: rowsOfGuessButtonsInAnimalQuiz){
+
+                    for(int column=0; column< row.getChildCount(); column++){
+
+                        Button button=(Button) row.getChildAt(column);
+                        button.setTypeface(MainActivity.chunkfive);
+                    }
+                }
+                break;
+            case "FontleroyBrown.ttf":
+                for(LinearLayout row: rowsOfGuessButtonsInAnimalQuiz){
+
+                for(int column=0; column< row.getChildCount(); column++){
+
+                    Button button=(Button) row.getChildAt(column);
+                    button.setTypeface(MainActivity.fontlerybrown);
+                }
+            }
+            break;
+
+            case "Wonderbar Demo.otf" :
+                for(LinearLayout row: rowsOfGuessButtonsInAnimalQuiz){
+
+                    for(int column=0; column< row.getChildCount(); column++){
+
+                        Button button=(Button) row.getChildAt(column);
+                        button.setTypeface(MainActivity.wonderbarDemo);
+                    }
+                }
+                break;
+
+        }
+    }
+
+
+    public void modifyBackgroundColor(SharedPreferences sharedPreferences){
+
+
+        String backgroundColor = sharedPreferences.getString(MainActivity.QUIZ_BACKGROUND_COLOR, null);
+
+        switch(backgroundColor){
+
+            case "White":
+                animalQuizLinearLayout.setBackgroundColor(Color.WHITE);
+                for(LinearLayout row:rowsOfGuessButtonsInAnimalQuiz){
+                    for(int column=0; column<row.getChildCount();column++){
+                        Button button=(Button) row.getChildAt(column);
+                        button.setBackgroundColor(Color.BLUE);
+                        button.setTextColor(Color.WHITE);
+                    }
+
+                }
+                txtAnswer.setTextColor(Color.BLUE);
+                txtQuestionNumber.setTextColor(Color.BLACK);
+                break;
+
+            case "Black":
+                animalQuizLinearLayout.setBackgroundColor(Color.BLACK);
+                for(LinearLayout row:rowsOfGuessButtonsInAnimalQuiz){
+                    for(int column=0; column<row.getChildCount();column++){
+                        Button button=(Button) row.getChildAt(column);
+                        button.setBackgroundColor(Color.YELLOW);
+                        button.setTextColor(Color.BLACK);
+                    }
+
+                }
+                txtAnswer.setTextColor(Color.WHITE);
+                txtQuestionNumber.setTextColor(Color.WHITE);
+                break;
+
+            case "Green":
+                animalQuizLinearLayout.setBackgroundColor(Color.GREEN);
+                for(LinearLayout row:rowsOfGuessButtonsInAnimalQuiz){
+                    for(int column=0; column<row.getChildCount();column++){
+                        Button button=(Button) row.getChildAt(column);
+                        button.setBackgroundColor(Color.BLUE);
+                        button.setTextColor(Color.WHITE);
+                    }
+
+                }
+                txtAnswer.setTextColor(Color.WHITE);
+                txtQuestionNumber.setTextColor(Color.YELLOW);
+                break;
+
+            case "Blue":
+                animalQuizLinearLayout.setBackgroundColor(Color.BLUE);
+                for(LinearLayout row:rowsOfGuessButtonsInAnimalQuiz){
+                    for(int column=0; column<row.getChildCount();column++){
+                        Button button=(Button) row.getChildAt(column);
+                        button.setBackgroundColor(Color.RED);
+                        button.setTextColor(Color.WHITE);
+                    }
+
+                }
+                txtAnswer.setTextColor(Color.WHITE);
+                txtQuestionNumber.setTextColor(Color.WHITE);
+                break;
+
+            case "Red":
+                animalQuizLinearLayout.setBackgroundColor(Color.RED);
+                for(LinearLayout row:rowsOfGuessButtonsInAnimalQuiz){
+                    for(int column=0; column<row.getChildCount();column++){
+                        Button button=(Button) row.getChildAt(column);
+                        button.setBackgroundColor(Color.BLUE);
+                        button.setTextColor(Color.WHITE);
+                    }
+
+                }
+                txtAnswer.setTextColor(Color.WHITE);
+                txtQuestionNumber.setTextColor(Color.WHITE);
+                break;
+
+            case "Yellow":
+                animalQuizLinearLayout.setBackgroundColor(Color.YELLOW);
+                for(LinearLayout row:rowsOfGuessButtonsInAnimalQuiz){
+                    for(int column=0; column<row.getChildCount();column++){
+                        Button button=(Button) row.getChildAt(column);
+                        button.setBackgroundColor(Color.BLACK);
+                        button.setTextColor(Color.WHITE);
+                    }
+
+                }
+                txtAnswer.setTextColor(Color.BLACK);
+                txtQuestionNumber.setTextColor(Color.BLACK);
+                break;
+        }
     }
 
 }
