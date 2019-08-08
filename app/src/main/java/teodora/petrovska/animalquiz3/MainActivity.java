@@ -12,6 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
     static Typeface chunkfive;
     static Typeface fontlerybrown;
     static Typeface wonderbarDemo;
+
+    MainActivityFragment myAnimalQuizFragment;
+
 
 
 
@@ -45,8 +51,14 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(MainActivity.this, R.xml.quiz_preferences, false);
         PreferenceManager.getDefaultSharedPreferences(MainActivity.this).registerOnSharedPreferenceChangeListener(settingsChangeListener);
 
+        myAnimalQuizFragment=(MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.animalQuizFragment);
 
+        myAnimalQuizFragment.modifyAnimalsGuessRows(PreferenceManager.getDefaultSharedPreferences(MainActivity.this));
+        myAnimalQuizFragment.modifyTypeOfAnimalsInQuiz(PreferenceManager.getDefaultSharedPreferences(MainActivity.this));
+        myAnimalQuizFragment.modifyQuizFont(PreferenceManager.getDefaultSharedPreferences(MainActivity.this));
+        myAnimalQuizFragment.modifyBackgroundColor(PreferenceManager.getDefaultSharedPreferences(MainActivity.this));
 
+        isSettingsChanged=false;
     }
 
     @Override
@@ -69,7 +81,43 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
+    isSettingsChanged=true;
 
+    if(key.equals(GUESSES)){
+
+        myAnimalQuizFragment.modifyAnimalsGuessRows(sharedPreferences);
+        myAnimalQuizFragment.resetAnimalQuiz();
+    }
+    else if (key.equals(ANIMAL_TYPE)){
+                Set<String>animalTypes=sharedPreferences.getStringSet(ANIMAL_TYPE, null);
+
+                if(animalTypes!=null && animalTypes.size()>0){
+                    myAnimalQuizFragment.modifyTypeOfAnimalsInQuiz(sharedPreferences);
+                    myAnimalQuizFragment.resetAnimalQuiz();
+                }
+                else
+                {
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    animalTypes.add(getString(R.string.default_animal_type));
+                    editor.putStringSet(ANIMAL_TYPE, animalTypes);
+                    editor.apply();
+
+                    Toast.makeText(MainActivity.this, R.string.toast_message, Toast.LENGTH_LONG).show();
+
+                }
+            }
+
+
+    else if (key.equals(QUIZ_FONT)){
+        myAnimalQuizFragment.modifyQuizFont(sharedPreferences);
+        myAnimalQuizFragment.resetAnimalQuiz();
+    }
+    else if(key.equals(QUIZ_BACKGROUND_COLOR)){
+        myAnimalQuizFragment.modifyBackgroundColor(sharedPreferences);
+        myAnimalQuizFragment.resetAnimalQuiz();
+    }
+
+    Toast.makeText(MainActivity.this, R.string.change_message, Toast.LENGTH_LONG).show();
         }
     };
 }

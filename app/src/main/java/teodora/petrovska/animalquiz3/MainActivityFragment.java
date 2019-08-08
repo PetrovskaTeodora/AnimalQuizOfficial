@@ -120,7 +120,7 @@ public class MainActivityFragment extends Fragment {
 
                 if(numberOfRightAnswers==NUMBER_OF_ANIMALS_INCLUDED_IN_QUIZ){
 
-                    DialogFragment animalQuizResults=new DialogFragment(){
+                DialogFragment animalQuizResults=new DialogFragment(){
 
                         @NonNull
                         @Override
@@ -323,7 +323,7 @@ private void showNextAnimal(){
         int column = secureRandomNumber.nextInt(2);
         LinearLayout randomRow=rowsOfGuessButtonsInAnimalQuiz[row];
         String CorrectAnimalImageName=getTheExactAnimalName(correctAnimalsAnswer);
-    ((Button) randomRow.getChildAt(column)).setText(animalImageName);
+    ((Button) randomRow.getChildAt(column)).setText(nextAnimalImageName);
 
     }
 

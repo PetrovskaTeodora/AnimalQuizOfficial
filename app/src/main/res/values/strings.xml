@@ -17,4 +17,7 @@
     <string name="results_string_value">%1$d number od guesses, and %2$.02f%% correct</string>
     <string name="reset_animal_quiz">Reset Animal Quiz</string>
     <string name="wrong_answer_message">No!</string>
+    <string name="default_animal_type">Wild_Animals</string>
+    <string name="toast_message">One Type ofAnimals must be selected. The Default Value is Wild Animals</string>
+    <string name="change_message">New Changes are Applied</string>
 </resources>
